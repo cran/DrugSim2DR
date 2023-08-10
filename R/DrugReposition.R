@@ -7,32 +7,12 @@ random_network<-function(kegg_random,r,p){
   return(rank2)
 }
 
-go_p_score_row<-function(genecount,descore,path_size){
-  score_row<-rep(0,path_size)
-  for(j in 1:length(genecount)){
-    if(genecount[j]!=""){
-      gene<-unlist(strsplit(genecount[j], split = ","))
-      location<-match(gene,descore[,1])
-      if(length(which(is.na(location)))>0){
-        de_score1<-0
-      }else{
-        location<-location[which(location!="NA")]
-        de1<-descore[location,2]
-        de_score1<-median(as.numeric(de1))
-      }
 
-      if (!is.na(de_score1)) {
-        score_row[j]<-de_score1
-      }
-    }
-  }
-  return(score_row)
-}
 
 #'@title DrugReposition
 #'@description The function "DrugReposition" is used in drug repositioning by calculating the eigenvector centrality of drugs.
 #'@param DE A matrix with one column of zscore.
-#'@param nperm Number of random permutations (default: 100).
+#'@param nperm Number of random permutations (default: 1000).
 #'@param r Restart the probability of the random-walk algorithm (default: 0.9).
 #'@param p For each node, if the difference in centrality score between iterations changes less than this value, the algorithm considers the calculation complete (default: 10^-10).
 #'@return A dataframe with seven columns those are drugbankid, centralscore, p.value,fdr,number of targets, drug targets,drugname.
@@ -41,18 +21,48 @@ go_p_score_row<-function(genecount,descore,path_size){
 #'@importFrom igraph page.rank
 #'@importFrom stats p.adjust
 #'@importFrom stats median
-#'@usage DrugReposition(DE,nperm = 100,r = 0.9,p = 10^-10)
+#'@importFrom fastmatch fmatch
+#'@importFrom utils setTxtProgressBar
+#'@importFrom utils txtProgressBar
+#'@usage DrugReposition(DE,nperm = 1000,r = 0.9,p = 10^-10)
 #'@export
 #'@examples
+#' library("igraph")
 #' # Obtain the example data
 #' GEP<-Gettest("GEP")
 #' label<-Gettest("label")
 #' # Run the function
 #' DEscore<-CalDEscore(GEP,label)
 #' # Run the function
-#' \donttest{drug_centrality<-DrugReposition(DE=DEscore,nperm = 100,r = 0.9,p = 10^-10)}
+#' \donttest{drug_centrality<-DrugReposition(DE=DEscore,nperm = 1000,r = 0.9,p = 10^-10)}
 
-DrugReposition<-function(DE,nperm = 100,r = 0.9,p = 10^-10){
+DrugReposition<-function(DE,nperm = 1000,r = 0.9,p = 10^-10){
+
+  go_p_score_row<-function(genecount,descore,path_size){
+    score_row<-rep(0,path_size)
+    aaa<-descore[,1]
+    bbb<-descore[,2]
+
+    for(j in 1:length(genecount)){
+      if(genecount[j]!=""){
+        gene<-unlist(strsplit(genecount[j], split = ","))
+        location<-fmatch(gene,aaa)
+        if(length(which(is.na(location)))>0){
+          de_score1<-0
+        }else{
+          location<-location[which(location!="NA")]
+          de1<-bbb[location]
+          de_score1<-median(as.numeric(de1))
+        }
+
+        if (!is.na(de_score1)) {
+          score_row[j]<-de_score1
+        }
+      }
+      #print(j)
+    }
+    return(score_row)
+  }
   old <- options()
   on.exit(options(old))
   options(stringsAsFactors = FALSE)
@@ -134,29 +144,61 @@ DrugReposition<-function(DE,nperm = 100,r = 0.9,p = 10^-10){
     Centrality_Scores<-matrix(nrow=path_size,ncol=iter+1)
     real.centra<-rank1
     Centrality_Scores[,1]<-real.centra
-    real.subname<-rownames(real.centra)
-    subpathway<-as.character(colnames(adj.final))
-    for(i in 1:iter){
-      per_subpathway<-sample(subpathway,replace = FALSE)
-      per_drug_drug<-adj.final
-      colnames(per_drug_drug)<-per_subpathway
-      rownames(per_drug_drug)<-per_subpathway
-      per_centra<-random_network(per_drug_drug,r,p)
-      location<-match(real.subname,per_subpathway)
-      per_centra1<-per_centra[location,]
-      Centrality_Scores[,i+1]<-per_centra1
+
+    print("Note: Completing 1000 perturbations may be a time-consuming task.")
+    pb <- txtProgressBar(style=3)
+
+    for (i in 1:iter) {
+
+      DEnames <- sample(rownames(DE), replace = FALSE)
+      rownames(DE) <- DEnames
+      DE[,1]<-DEnames
+      median_score <- matrix(0, nrow = path_size, ncol = go_size)
+      for (k in 1:path_size) {
+        con_gene <- go_path_gene[k, ]
+        row <- go_p_score_row(con_gene, DE, go_size)
+        median_score[k, ] <- row
+        #print(k)
+      }
+      rownames(median_score) = drug_genes[, 1]
+      colnames(median_score) = Go[, 1]
+      # jaccard <- t(jaccard)
+      go_drug <- median_score * jaccard
+      edge <- as.matrix(go_drug)
+      edget <- t(edge)
+      drug_drug <- edge %*% edget
+      adj.final <- as.matrix(drug_drug)
+      diag(adj.final) <- 0
+      graph = graph.adjacency(adj.final, mode = c("undirected"),
+                              weighted = TRUE, add.rownames = TRUE)
+      temp = page.rank(graph, vids = V(graph), directed = FALSE,
+                       damping = r, weights = NULL, options = list(niter = 10^10,
+                                                                   eps = p))
+      rank = temp$vector
+      rank1 = as.matrix(rank)
+
+      Centrality_Scores[, i + 1] <- rank1
+      setTxtProgressBar(pb, i/iter)
     }
+    close(pb)
     adj = as.matrix(Centrality_Scores)
     perm_rank = adj[,2:(iter+1)]
     perm_rank<-as.matrix(perm_rank)
     orig_rank = adj[,1]
+    pval<-c()
 
-    pval=pnorm(orig_rank,mean = mean(perm_rank),sd=sd(perm_rank),lower.tail = FALSE)
+    for (i in 1:length(orig_rank)) {
 
-    p_padjust<-p.adjust(pval,method = "fdr")
-    pa<-as.numeric(p_padjust)
-    fdr<-round(pa,3)
-    allresult<-cbind.data.frame(subpathway,rank1[,1])
+      pvall <- sum(perm_rank[i, ] >= orig_rank[i])/nperm
+      pval <- c(pval,pvall)
+
+      print(i)
+    }
+
+    p_padjust <- p.adjust(pval, method = "fdr")
+    pa <- as.numeric(p_padjust)
+    fdr <- round(pa, 3)
+    allresult<-cbind.data.frame(subpathway,Centrality_Scores[,1])
     allresult<-cbind.data.frame(allresult,pval)
     allresult<-cbind.data.frame(allresult,fdr)
     allresult[,1]<-as.character(allresult[,1])
@@ -193,7 +235,8 @@ DrugReposition<-function(DE,nperm = 100,r = 0.9,p = 10^-10){
     colnames(drugname)[1] = "DBID"
     result2<-merge(result2,drugname,by = "DBID")
     result2<-result2[,c(1,7,2,3,4,6,5)]
-    result2<-result2[order(result2[,3],decreasing = TRUE),]
+    result2<-result2[order(result2[,4],decreasing = F),]
     return(result2)
 }
 }
+

@@ -25,6 +25,7 @@
 
 
 plotDruglink<-function(drug1,drug2,i = 5,color_MF = "#43AAEF",color_drug = "#F7525B",layout_type = "circle"){
+
   drugname<-Gettest("drugname")
   col<-Gettest("commongenes_ind")
   if (layout_type == "circle") {

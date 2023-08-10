@@ -8,6 +8,7 @@ knitr::opts_chunk$set(
 
 ## ----eval=TRUE----------------------------------------------------------------
 library(DrugSim2DR)
+library(igraph)
 # Obtain the example data
 GEP<-Gettest("GEP")
 label<-Gettest("label")
@@ -29,7 +30,7 @@ drug_similarity[1:5,]
 
 ## ---- eval=FALSE--------------------------------------------------------------
 #  # Calculate the centrality score of drugs
-#  drug_centrality<-DrugReposition(DEscore,nperm = 100,r = 0.9)
+#  drug_centrality<-DrugReposition(DEscore,nperm = 1000,r = 0.9)
 #  ###view first ten drugs result
 #  drug_centrality[1:5,]
 #  

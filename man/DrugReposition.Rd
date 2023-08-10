@@ -4,12 +4,12 @@
 \alias{DrugReposition}
 \title{DrugReposition}
 \usage{
-DrugReposition(DE,nperm = 100,r = 0.9,p = 10^-10)
+DrugReposition(DE,nperm = 1000,r = 0.9,p = 10^-10)
 }
 \arguments{
 \item{DE}{A matrix with one column of zscore.}
 
-\item{nperm}{Number of random permutations (default: 100).}
+\item{nperm}{Number of random permutations (default: 1000).}
 
 \item{r}{Restart the probability of the random-walk algorithm (default: 0.9).}
 
@@ -22,11 +22,12 @@ A dataframe with seven columns those are drugbankid, centralscore, p.value,fdr,n
 The function "DrugReposition" is used in drug repositioning by calculating the eigenvector centrality of drugs.
 }
 \examples{
+library("igraph")
 # Obtain the example data
 GEP<-Gettest("GEP")
 label<-Gettest("label")
 # Run the function
 DEscore<-CalDEscore(GEP,label)
 # Run the function
-\donttest{drug_centrality<-DrugReposition(DE=DEscore,nperm = 100,r = 0.9,p = 10^-10)}
+\donttest{drug_centrality<-DrugReposition(DE=DEscore,nperm = 1000,r = 0.9,p = 10^-10)}
 }
