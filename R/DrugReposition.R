@@ -1,6 +1,6 @@
 random_network<-function(kegg_random,r,p){
   adj.final1<-as.matrix(kegg_random)
-  graph1 = graph.adjacency(adj.final1,mode=c("undirected"), weighted=TRUE,add.rownames=TRUE)
+  graph1 = graph.adjacency(adj.final1,mode=c("undirected"), weighted=TRUE)
   temp1 = page.rank(graph1, vids=V(graph1), directed=FALSE, damping=r, weights=NULL, options = list(niter = 10^10, eps = p))
   rank1 = temp1$vector
   rank2 = as.matrix(rank1)
@@ -12,7 +12,7 @@ random_network<-function(kegg_random,r,p){
 #'@title DrugReposition
 #'@description The function "DrugReposition" is used in drug repositioning by calculating the eigenvector centrality of drugs.
 #'@param DE A matrix with one column of zscore.
-#'@param nperm Number of random permutations (default: 1000).
+#'@param nperm Number of random permutations (default: 2).
 #'@param r Restart the probability of the random-walk algorithm (default: 0.9).
 #'@param p For each node, if the difference in centrality score between iterations changes less than this value, the algorithm considers the calculation complete (default: 10^-10).
 #'@return A dataframe with seven columns those are drugbankid, centralscore, p.value,fdr,number of targets, drug targets,drugname.
@@ -24,7 +24,7 @@ random_network<-function(kegg_random,r,p){
 #'@importFrom fastmatch fmatch
 #'@importFrom utils setTxtProgressBar
 #'@importFrom utils txtProgressBar
-#'@usage DrugReposition(DE,nperm = 1000,r = 0.9,p = 10^-10)
+#'@usage DrugReposition(DE,nperm = 2,r = 0.9,p = 10^-10)
 #'@export
 #'@examples
 #' library("igraph")
@@ -34,9 +34,9 @@ random_network<-function(kegg_random,r,p){
 #' # Run the function
 #' DEscore<-CalDEscore(GEP,label)
 #' # Run the function
-#' \donttest{drug_centrality<-DrugReposition(DE=DEscore,nperm = 1000,r = 0.9,p = 10^-10)}
+#' \donttest{drug_centrality<-DrugReposition(DE=DEscore,nperm = 2,r = 0.9,p = 10^-10)}
 
-DrugReposition<-function(DE,nperm = 1000,r = 0.9,p = 10^-10){
+DrugReposition<-function(DE,nperm = 2,r = 0.9,p = 10^-10){
 
   go_p_score_row<-function(genecount,descore,path_size){
     score_row<-rep(0,path_size)
@@ -91,7 +91,7 @@ DrugReposition<-function(DE,nperm = 1000,r = 0.9,p = 10^-10){
   drug_drug<-edge%*%edget
   adj.final<-as.matrix(drug_drug)
   diag(adj.final)<-0
-  graph = graph.adjacency(adj.final,mode=c("undirected"), weighted=TRUE,add.rownames=TRUE)
+  graph = graph.adjacency(adj.final,mode=c("undirected"), weighted=TRUE)
   temp = page.rank(graph, vids=V(graph), directed=FALSE, damping=r, weights=NULL,options = list(niter = 10^10, eps = p))
   rank = temp$vector
   rank1 = as.matrix(rank)
@@ -170,7 +170,7 @@ DrugReposition<-function(DE,nperm = 1000,r = 0.9,p = 10^-10){
       adj.final <- as.matrix(drug_drug)
       diag(adj.final) <- 0
       graph = graph.adjacency(adj.final, mode = c("undirected"),
-                              weighted = TRUE, add.rownames = TRUE)
+                              weighted = TRUE)
       temp = page.rank(graph, vids = V(graph), directed = FALSE,
                        damping = r, weights = NULL, options = list(niter = 10^10,
                                                                    eps = p))

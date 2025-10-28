@@ -4,6 +4,7 @@
 \name{datasummary}
 \alias{DrugSim2DR}
 \alias{DrugSim2DR-package}
+\alias{datasummary}
 \title{datasummary: Custom Data Summaries}
 \description{
 Easily generate custom data frame summaries

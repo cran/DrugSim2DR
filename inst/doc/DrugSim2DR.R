@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -16,38 +16,29 @@ label<-Gettest("label")
 DEscore<-CalDEscore(GEP,label)
 head(DEscore[1:5,])
 
-## ---- eval=FALSE--------------------------------------------------------------
-#  # Calculate the centrality score of drugs
-#  drug_similarity<-DrugSimscore(DEscore,nperm = 0)
-#  ###view first ten drugs result
-#  drug_similarity[1:5,]
-#  
+## ----eval=FALSE---------------------------------------------------------------
+# # Calculate the centrality score of drugs
+# drug_similarity<-DrugSimscore(DEscore,nperm = 0)
+# ###view first ten drugs result
+# drug_similarity[1:5,]
+# 
 
 ## ----echo=FALSE---------------------------------------------------------------
 ###Get the result of this function
 drug_similarity<-Gettest("drug_drug")
 drug_similarity[1:5,]
 
-## ---- eval=FALSE--------------------------------------------------------------
-#  # Calculate the centrality score of drugs
-#  drug_centrality<-DrugReposition(DEscore,nperm = 1000,r = 0.9)
-#  ###view first ten drugs result
-#  drug_centrality[1:5,]
-#  
+## ----eval=FALSE---------------------------------------------------------------
+# # Calculate the centrality score of drugs
+# drug_centrality<-DrugReposition(DEscore,nperm = 1000,r = 0.9)
+# ###view first ten drugs result
+# drug_centrality[1:5,]
+# 
 
 ## ----echo=FALSE---------------------------------------------------------------
 ###Get the result of this function
 drug_centrality<-Gettest("drug_centrality")
 drug_centrality[1:5,]
-
-## ----message=FALSE,results="hide"---------------------------------------------
-# load depend package
-require(ChemmineR)
-require(rvest)
-
-# plot the chemical structure 
-plotDrugstructure("DB00780")
-
 
 ## ----message=FALSE------------------------------------------------------------
 # load depend package

@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ji Li, Jiashuo Wu, JunweiHan" />
 
-<meta name="date" content="2023-08-10" />
+<meta name="date" content="2025-10-28" />
 
 <title>DrugSim2DR User Guide</title>
 
@@ -1527,6 +1527,7 @@ if (window.hljs) {
 
 
 
+
 <style type="text/css">
 .main-container {
 max-width: 940px;
@@ -1548,6 +1549,9 @@ outline: none;
 summary {
 display: list-item;
 }
+details > summary > p:only-child {
+display: inline;
+}
 pre code {
 padding: 0;
 }
@@ -1566,23 +1570,17 @@ overflow-y: auto;
 border: 1px solid #ddd;
 border-radius: 4px;
 }
-.tabset-dropdown > .nav-tabs > li.active:before {
-content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+content: "\e259";
 font-family: 'Glyphicons Halflings';
 display: inline-block;
 padding: 10px;
 border-right: 1px solid #ddd;
 }
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-content: "";
-border: none;
-}
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-content: "";
+content: "\e258";
 font-family: 'Glyphicons Halflings';
-display: inline-block;
-padding: 10px;
-border-right: 1px solid #ddd;
+border: none;
 }
 .tabset-dropdown > .nav-tabs > li.active {
 display: block;
@@ -1625,7 +1623,7 @@ display: none;
 
 <h1 class="title toc-ignore">DrugSim2DR User Guide</h1>
 <h4 class="author">Ji Li, Jiashuo Wu, JunweiHan</h4>
-<h4 class="date">2023-08-10</h4>
+<h4 class="date">2025-10-28</h4>
 
 </div>
 
@@ -1641,10 +1639,8 @@ Example 2 : Calculate drug-drug functional similarity. </font></a></li>
 <li><a href="#example-3-identify-candidate-drugs-by-random-walk-algorithm." id="toc-example-3-identify-candidate-drugs-by-random-walk-algorithm."><font face="微软雅黑">
 Example 3 : Identify candidate drugs by random-walk algorithm.
 </font></a></li>
-<li><a href="#visualize-1-plot-the-chemical-structure-of-a-compound." id="toc-visualize-1-plot-the-chemical-structure-of-a-compound."><font face="微软雅黑">
-Visualize 1: Plot the chemical structure of a compound. </font></a></li>
-<li><a href="#visualize-2-plot-the-heatmap-of-drug-targets-expression." id="toc-visualize-2-plot-the-heatmap-of-drug-targets-expression."><font face="微软雅黑">
-Visualize 2: Plot the heatmap of drug targets
+<li><a href="#visualize-1-plot-the-heatmap-of-drug-targets-expression." id="toc-visualize-1-plot-the-heatmap-of-drug-targets-expression."><font face="微软雅黑">
+Visualize 1: Plot the heatmap of drug targets
 expression.</font></a></li>
 <li><a href="#visualize-3-plot-a-druggo-bipartite-network." id="toc-visualize-3-plot-a-druggo-bipartite-network."><font face="微软雅黑">
 Visualize 3: Plot a drug/GO bipartite network.</font></a></li>
@@ -1761,23 +1757,8 @@ drug_centrality[1:5,]
 </div>
 <hr />
 </div>
-<div id="visualize-1-plot-the-chemical-structure-of-a-compound." class="section level3">
-<h3><font face="微软雅黑"> Visualize 1: Plot the chemical structure of a
-compound. </font></h3>
-<p><font face="微软雅黑"> The function <code>plotDrugstructure</code>
-used to plot the chemical structure of a compound. The user needs to
-input the drug id. The commands are as follows: </font></p>
-<pre class="r"><code># load depend package
-require(ChemmineR)
-require(rvest)
-
-# plot the chemical structure 
-plotDrugstructure(&quot;DB00780&quot;)</code></pre>
-<p><img src="data:image/png;base64,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VdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAwVdoBAFOlHQAw1f8P4qEUTnFdrDEAAAAASUVORK5CYII=" width="672" /></p>
-<hr />
-</div>
-<div id="visualize-2-plot-the-heatmap-of-drug-targets-expression." class="section level3">
-<h3><font face="微软雅黑"> Visualize 2: Plot the heatmap of drug targets
+<div id="visualize-1-plot-the-heatmap-of-drug-targets-expression." class="section level3">
+<h3><font face="微软雅黑"> Visualize 1: Plot the heatmap of drug targets
 expression.</font></h3>
 <div id="section" class="section level5">
 <h5></h5>

@@ -97,25 +97,7 @@ drug_centrality[1:5,]
 ``` 
 
 *****
-
-
-### <font face="微软雅黑"> Visualize 1: Plot the chemical structure of a compound. </font>
-
-<font face="微软雅黑">  The function `plotDrugstructure` used to plot the chemical structure of a compound. The user needs to input the drug id.
-  The commands are as follows: </font>
-
-```{r,message=FALSE,results="hide"}
-# load depend package
-require(ChemmineR)
-require(rvest)
-
-# plot the chemical structure 
-plotDrugstructure("DB00780")
-
-```
-
-*****
-### <font face="微软雅黑"> Visualize 2: Plot the heatmap of drug targets expression.</font>
+### <font face="微软雅黑"> Visualize 1: Plot the heatmap of drug targets expression.</font>
 
 #####
 <font face="微软雅黑">  The function `plotTargetheatmap` can plot the heatmap of drug targets expression. The user needs to input drug id, gene expression profile, and sample label.
